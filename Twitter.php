@@ -15,13 +15,15 @@ class Twitter {
   private $getData = array();
 
   const STAT_URL = 'http://twitter.com/statuses/';
-  const USER_URL = 'http://twitter.com/users/show/';
+  const USER_URL = 'http://twitter.com/users/';
+  const TWIT_URL = 'http://twitter.com/';
+  const DMSG_URL = 'http://twitter.com/direct_messages/';
 
   const E_HTTP_SEND_FAILED = 'Error sending HTTP get/post request.';
   const E_MAX_CHAR_EXCEEDED = 'Maximum of 160 characters limit exceeded.';
 
 
-  public function __construct($user = '', $pass = '') {
+  public function __construct($user = NULL, $pass = NULL) {
     $this->user = $user;
     $this->pass = $pass;
 
@@ -70,16 +72,26 @@ class Twitter {
 
 
   private function addPostData($param, $value) {
-    $this->req->addPostData($param, $value);
+    if($value != NULL) {
+      $this->req->addPostData($param, $value);
+    }
   }
 
 
   private function addGetData($param, $value) {
-    $this->getData[$param] = $value;
+    if($value != NULL) {
+      $this->getData[$param] = $value;
+    }
   }
 
 
-  private function get($url, $method) {
+  private function get($url, $method, $auth = NULL) {
+    if($auth) {
+      $this->setBasicAuth(1);
+    }
+    else {
+       $this->setBasicAuth(0);
+    }
     //expand $getData array
     if(count($this->getData) > 0) {
       $getData = '?';
@@ -95,7 +107,13 @@ class Twitter {
   }
 
 
-  private function post($url, $method) {
+  private function post($url, $method, $auth = NULL) {
+    if($auth) {
+      $this->setBasicAuth(1);
+    }
+    else {
+       $this->setBasicAuth(0);
+    }
     $this->setHttpMethod('post');
     $this->setURL($url.$method.'.xml');
     $r = $this->request();
@@ -115,44 +133,28 @@ class Twitter {
   }
 
 
-  public function friendsTimeline($since = '', $sinceId = '',
-                                  $count = '', $page = '') {
-    if(!empty($since)) {
-      $this->addGetData('since', $since);
-    }
-    if(!empty($sinceId)) {
-      $this->addGetData('since_id', $sinceId);
-    }
-    if(!empty($count) && $count <= 200) {
+  public function friendsTimeline($since = NULL, $sinceId = NULL,
+                                  $count = NULL, $page = NULL) {
+    $this->addGetData('since', $since);
+    $this->addGetData('since_id', $sinceId);
+    if(count($count) <= 200) {
       $this->addGetData('count', $count);
     }
-    if(!empty($page)) {
-      $this->addGetData('page', $page);
-    }
-    $this->setBasicAuth(1);
-    return $this->get(self::STAT_URL, 'friends_timeline');
+    $this->addGetData('page', $page);
+    return $this->get(self::STAT_URL, 'friends_timeline', 1);
   }
 
 
-  public function userTimeline($id = '', $count = '', $since = ''
-                               $sinceId = '', $page = '') {
-    if(!empty($id)) {
-      $this->addGetData('id', $id);
-    }
-    if(!empty($count) && $count <= 200) {
+  public function userTimeline($id = NULL, $count = NULL, $since = NULL,
+                               $sinceId = NULL, $page = NULL) {
+    $this->addGetData('id', $id);
+    if(count($count) <= 200) {
       $this->addGetData('count', $count);
     }
-    if(!empty($since)) {
-      $this->addGetData('since', $since);
-    }
-    if(!empty($sinceId)) {
-      $this->addGetData('since_id', $sinceId);
-    }
-    if(!empty($page)) {
-      $this->addGetData('page', $page);
-    }
-    $this->setBasicAuth(1);
-    return $this->get(self::STAT_URL, 'user_timeline');
+    $this->addGetData('since', $since);
+    $this->addGetData('since_id', $sinceId);
+    $this->addGetData('page', $page);
+    return $this->get(self::STAT_URL, 'user_timeline', 1);
   }
 
 
@@ -161,53 +163,83 @@ class Twitter {
   }
 
 
-  public function update($status, $inReplyToStatusId = '') {
+  public function update($status, $inReplyToStatusId = NULL) {
     if(strlen($status) > 160) die(self::E_MAX_CHAR_EXCEEDED);
     $this->addPostData('status', $status);
-    if(!empty($inReplyToStatusId)) {
-      $this->addPostData('in_reply_to_status_id', $inReplyToStatusId);
-    }
-    $this->setBasicAuth(1);
-    return $this->post(self::STAT_URL, 'update');
+    $this->addPostData('in_reply_to_status_id', $inReplyToStatusId);
+    return $this->post(self::STAT_URL, 'update', 1);
   }
 
 
-  public function replies($page = '', $since = '', $sinceId = '') {
-    if(!empty($page)) {
-      $this->addGetData('page', $page);
-    }
-    if(!empty($since)) {
-      $this->addGetData('since', $since);
-    }
-    if(!empty($sinceId)) {
-      $this->addGetData('since_id', $sinceId);
-    }
-    $this->setBasicAuth(1);
-    return $this->get(self::STAT_URL, 'replies');
+  public function replies($page = NULL, $since = NULL, $sinceId = NULL) {
+    $this->addGetData('page', $page);
+    $this->addGetData('since', $since);
+    $this->addGetData('since_id', $sinceId);
+    return $this->get(self::STAT_URL, 'replies', 1);
   }
 
 
   public function destroy($id) {
-    $this->setBasicAuth(1);
-    return $this->post(self::STAT_URL, 'destroy/'.$id);  
+    return $this->post(self::STAT_URL, 'destroy/'.$id, 1);
   }
 
 
-  public function friends($id = '', $page = '', $lite = '', $since = '') {
-    if(!empty($id)) {
-      $this->addGetData('id', $id);
-    }
-    if(!empty($page)) {
-      $this->addGetData('page', $page);
-    }
-    if(!empty($lite)) {
-      $this->addGetData('lite', $lite);
-    }
-    if(!empty($since)) {
-      $this->addGetData('since', $since);
-    }
-    $this->setBasicAuth(1);
-    return $this->get(self::STAT_URL, 'friends');
+  public function friends($id = NULL, $page = NULL,
+                          $lite = NULL, $since = NULL) {
+    $this->addGetData('id', $id);
+    $this->addGetData('page', $page);
+    $this->addGetData('lite', $lite);
+    $this->addGetData('since', $since);
+    return $this->get(self::STAT_URL, 'friends', 1);
+  }
+
+
+  public function followers($id = NULL, $page = NULL, $lite = NULL) {
+    $this->addGetData('id', $id);
+    $this->addGetData('page', $page);
+    $this->addGetData('lite', $lite);
+    return $this->get(self::STAT_URL, 'followers', 1);
+  }
+
+
+  public function featured() {
+    return $this->get(self::STAT_URL, 'featured');
+  }
+
+
+  public function usersShow($id, $email = NULL) {
+    $this->addGetData('id', $id);
+    $this->addGetData('email', $email);
+    return $this->get(self::USER_URL, 'show/'.$id, 1);
+  }
+
+
+  public function directMessages($since = NULL, $sinceId = NULL,
+                                 $page = NULL) {
+    $this->addGetData('since', $since);
+    $this->addGetData('since_id', $sinceId);
+    $this->addGetData('page', $page);
+    return $this->get(self::TWIT_URL, 'direct_messages', 1);
+  }
+
+
+  public function sent($since = NULL, $sinceId = NULL, $page = NULL) {
+    $this->addGetData('since', $since);
+    $this->addGetData('since_id', $sinceId);
+    $this->addGetData('page', $page);
+    return $this->get(self::DMSG_URL, 'sent', 1);
+  }
+
+
+  public function _new($user, $text) {
+    $this->addPostData('user', $user);
+    $this->addPostData('text', $text);
+    return $this->post(self::DMSG_URL, 'new', 1);
+  }
+
+
+  public function dmDestroy($id) {
+    return $this->post(self::DMSG_URL, 'destroy/'.$id, 1);
   }
 
 
@@ -220,7 +252,7 @@ class Twitter {
 //debug
 //$t = new Twitter('user', 'pass');
 //$r = $t->replies(1);
-//$r = $t->update('thinks twitter is waaaay cooler than plurk');
+//$r = $t->update('executes another PHP-Twitter test');
 //print_r($r);
 
 ?>
