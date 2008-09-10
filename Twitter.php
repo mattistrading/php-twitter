@@ -21,6 +21,9 @@ class Twitter {
   const FRND_URL = 'http://twitter.com/friendships/';
   const ACC_URL = 'http://twitter.com/account/';
   const FAV_URL = 'http://twitter.com/favorites/';
+  const NOT_URL = 'http://twitter.com/notifications/';
+  const BLK_URL = 'http://twitter.com/blocks/';
+  const HELP_URL = 'http://twitter.com/help/';
 
   const E_HTTP_SEND_FAILED = 'Error sending HTTP get/post request.';
   const E_MAX_CHAR_EXCEEDED = 'Maximum of 160 characters limit exceeded.';
