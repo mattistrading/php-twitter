@@ -14,10 +14,13 @@ class Twitter {
 
   protected $getData = array();
 
+  const TWIT_URL = 'http://twitter.com/';
   const STAT_URL = 'http://twitter.com/statuses/';
   const USER_URL = 'http://twitter.com/users/';
-  const TWIT_URL = 'http://twitter.com/';
   const DMSG_URL = 'http://twitter.com/direct_messages/';
+  const FRND_URL = 'http://twitter.com/friendships/';
+  const ACC_URL = 'http://twitter.com/account/';
+  const FAV_URL = 'http://twitter.com/favorites/';
 
   const E_HTTP_SEND_FAILED = 'Error sending HTTP get/post request.';
   const E_MAX_CHAR_EXCEEDED = 'Maximum of 160 characters limit exceeded.';
