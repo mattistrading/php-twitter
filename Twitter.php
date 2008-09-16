@@ -1,4 +1,27 @@
 <?php
+
+/**
+* Class Twitter
+*
+* PHP Twitter is a PHP5-strict library to Twitter API
+* as documented in http://apiwiki.twitter.com/REST+API+Documentation.
+* All methods and parameters are supported by this class.
+*
+* This class provides a basic class for connecting, authenticating,
+* and doing post and get requests. To use methods described in twitter
+* apiwiki, include classes in Methods/ directory.
+*
+* This class depends on PEAR HTTP_Request and XML_Serializer.
+* Please make sure that these libraries are installed on your
+* server.
+*
+* @package	Twitter
+* @file		Twitter.php
+* @author	Galuh Utama <galuh.utama@gwutama.de>
+* @version 	160808
+*
+*/
+
   
 require_once 'HTTP/Request.php';
 require_once 'XML/Unserializer.php';

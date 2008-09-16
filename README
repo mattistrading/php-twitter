@@ -1,0 +1,30 @@
+PHP Twitter is a PHP5-strict object-oriented twitter library which uses the Twitter API described in http://apiwiki.twitter.com/REST+API+Documentation. Currently, all API methods are implemented and can be used.
+
+This library depends on PEAR HTTP_Request and XML_Serializer. Please make sure that these libraries are installed on your server.
+
+Developed by Galuh Utama <galuh.utama@gwutama.de>. Drop me a line if you like PHP Twitter or if you find any bugs.
+
+This library is licensed under GPL v3.
+
+
+USAGE
+
+Include Twitter.php as the base class and the API methods classes in Methods/ directory.
+
+Example:
+<?php
+
+require_once("Twitter.php");
+require_once("Methods/Status.php");
+
+$twitter = new Status('username', 'password');
+$result = $twitter->friendsTimeline();
+print_r($result);
+
+?>
+
+
+TODO
+
+- Classes and methods documentation
+- Extensive methods testing
