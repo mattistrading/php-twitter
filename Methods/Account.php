@@ -15,7 +15,7 @@ class Account extends Twitter {
 
   public function updateDeliveryDevice($device) {
     $this->addPostData('device', $device);
-    return $this->post(self:ACC_URL, 'update_delivery_device', 1);
+    return $this->post(self::ACC_URL, 'update_delivery_device', 1);
   }
 
 
